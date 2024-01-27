@@ -1,0 +1,46 @@
+version: '3'
+services:
+  odoo17:
+    image: odoo:17
+    depends_on:
+      - db_odoo
+    ports:
+      - "8069:8069"
+    volumes:
+      - odoo-web-data:/var/lib/odoo
+      - ./config:/etc/odoo
+      - ./addons:/mnt/extra-addons
+    environment:
+    - HOST=db_odoo
+    - USER=odoo
+    - PASSWORD=Wii-fRZnW1lB2aSIT_ShgQFWZaH-uZzs9XEmfYllGMA=
+    networks:
+      - frontend
+
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=frontend
+      - traefik.http.routers.odoo17.tls.certresolver=myresolver
+      - traefik.http.routers.odoo17.rule=Host(`odoo17.mike.codecommun.re`)
+      - traefik.http.services.odoo17.loadbalancer.server.port=8069
+      
+  db_odoo:
+    image: postgres:15
+    hostname: db_odoo
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=Wii-fRZnW1lB2aSIT_ShgQFWZaH-uZzs9XEmfYllGMA=
+      - POSTGRES_USER=odoo
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data/pgdata
+    networks:
+      - frontend
+
+volumes:
+  odoo-web-data:
+  odoo-db-data:
+
+
+networks:
+  frontend:
+    external: true
