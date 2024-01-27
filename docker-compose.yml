@@ -4,6 +4,8 @@ services:
     image: odoo:17
     depends_on:
       - db_odoo
+    links:
+      - db_odoo:db_odoo
     ports:
       - "8069:8069"
     volumes:
